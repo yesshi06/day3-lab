@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>公司估值系统 — 原型图</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+  :root {
+    --primary: #4F6BF6; --primary-light: #E8ECFF; --success: #22C55E;
+    --warning: #F59E0B; --danger: #EF4444; --bg: #F3F4F8;
+    --card: #FFFFFF; --text: #1E293B; --text2: #64748B;
+    --border: #E2E8F0; --radius: 12px; --shadow: 0 2px 12px rgba(0,0,0,.06);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family: -apple-system, "PingFang SC", "Helvetica Neue", Arial, sans-serif; background:var(--bg); color:var(--text); }
+
+  /* ===== Top Nav ===== */
+  .top-nav { background:#fff; border-bottom:1px solid var(--border); padding:0 32px; display:flex; align-items:center; height:56px; position:sticky; top:0; z-index:100; }
+  .top-nav .logo { font-size:18px; font-weight:700; color:var(--primary); margin-right:40px; letter-spacing:1px; }
+  .top-nav .nav-items { display:flex; gap:4px; }
+  .top-nav .nav-items button { background:none; border:none; padding:8px 18px; border-radius:8px; font-size:14px; cursor:pointer; color:var(--text2); transition:.2s; }
+  .top-nav .nav-items button:hover { background:var(--primary-light); color:var(--primary); }
+  .top-nav .nav-items button.active { background:var(--primary); color:#fff; font-weight:600; }
+
+  /* ===== Page Container ===== */
+  .page { display:none; padding:28px 32px; max-width:1360px; margin:0 auto; }
+  .page.active { display:block; }
+  .page-title { font-size:22px; font-weight:700; margin-bottom:6px; }
+  .page-desc { color:var(--text2); font-size:14px; margin-bottom:24px; }
+
+  /* ===== Card ===== */
+  .card { background:var(--card); border-radius:var(--radius); box-shadow:var(--shadow); padding:24px; margin-bottom:20px; }
+  .card-title { font-size:15px; font-weight:700; margin-bottom:16px; display:flex; align-items:center; gap:8px; }
+  .card-title .dot { width:6px; height:6px; border-radius:50%; background:var(--primary); }
+
+  /* ===== Grid ===== */
+  .grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+  .grid-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:20px; }
+  .grid-4 { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; }
+
+  /* ===== Stat Card ===== */
+  .stat-card { background:var(--card); border-radius:var(--radius); box-shadow:var(--shadow); padding:20px; }
+  .stat-card .label { font-size:12px; color:var(--text2); margin-bottom:6px; }
+  .stat-card .value { font-size:26px; font-weight:700; }
+  .stat-card .sub { font-size:12px; color:var(--success); margin-top:4px; }
+  .stat-card .sub.warn { color:var(--warning); }
+
+  /* ===== Table ===== */
+  table { width:100%; border-collapse:collapse; font-size:14px; }
+  th { text-align:left; padding:10px 12px; background:#F8FAFC; color:var(--text2); font-weight:600; border-bottom:2px solid var(--border); }
+  td { padding:10px 12px; border-bottom:1px solid var(--border); }
+  tr:hover td { background:#FAFBFE; }
+
+  /* ===== Badge ===== */
+  .badge { display:inline-block; padding:2px 10px; border-radius:20px; font-size:12px; font-weight:600; }
+  .badge-blue { background:var(--primary-light); color:var(--primary); }
+  .badge-green { background:#DCFCE7; color:#16A34A; }
+  .badge-yellow { background:#FEF3C7; color:#D97706; }
+  .badge-red { background:#FEE2E2; color:#DC2626; }
+
+  /* ===== Button ===== */
+  .btn { padding:8px 20px; border-radius:8px; border:none; font-size:14px; font-weight:600; cursor:pointer; transition:.2s; }
+  .btn-primary { background:var(--primary); color:#fff; }
+  .btn-primary:hover { background:#3B55E6; }
+  .btn-outline { background:#fff; color:var(--primary); border:1.5px solid var(--primary); }
+  .btn-outline:hover { background:var(--primary-light); }
+  .btn-sm { padding:5px 14px; font-size:13px; }
+
+  /* ===== Search Bar ===== */
+  .search-bar { display:flex; gap:12px; margin-bottom:20px; }
+  .search-bar input, .search-bar select { padding:9px 14px; border:1.5px solid var(--border); border-radius:8px; font-size:14px; outline:none; transition:.2s; }
+  .search-bar input:focus, .search-bar select:focus { border-color:var(--primary); box-shadow:0 0 0 3px rgba(79,107,246,.12); }
+  .search-bar input { flex:1; max-width:360px; }
+
+  /* ===== Tag ===== */
+  .tag { display:inline-flex; align-items:center; gap:4px; background:#F1F5F9; padding:4px 10px; border-radius:6px; font-size:13px; margin:3px 4px 3px 0; }
+  .tag .remove { cursor:pointer; color:var(--danger); font-weight:700; }
+
+  /* ===== AI Card ===== */
+  .ai-card { background:linear-gradient(135deg,#EEF2FF 0%,#E0E7FF 100%); border:1.5px solid #C7D2FE; border-radius:var(--radius); padding:20px; }
+  .ai-card .ai-label { display:inline-flex; align-items:center; gap:6px; font-size:13px; font-weight:700; color:var(--primary); margin-bottom:10px; }
+  .ai-card .ai-label span { font-size:16px; }
+  .ai-card p { font-size:14px; line-height:1.7; color:var(--text); }
+
+  /* ===== Method Card ===== */
+  .method-card { border-left:4px solid var(--primary); }
+  .method-card.dcf { border-left-color:var(--success); }
+  .method-card.pb { border-left-color:var(--warning); }
+
+  /* ===== Progress ===== */
+  .progress-bar { height:8px; background:#E2E8F0; border-radius:4px; overflow:hidden; margin-top:8px; }
+  .progress-bar .fill { height:100%; border-radius:4px; transition: width .6s; }
+
+  /* ===== Stepper ===== */
+  .stepper { display:flex; align-items:center; gap:0; margin-bottom:28px; }
+  .step { display:flex; align-items:center; gap:8px; }
+  .step .circle { width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:700; background:#E2E8F0; color:var(--text2); }
+  .step.done .circle { background:var(--success); color:#fff; }
+  .step.active .circle { background:var(--primary); color:#fff; }
+  .step .step-label { font-size:13px; color:var(--text2); }
+  .step.active .step-label { color:var(--primary); font-weight:600; }
+  .step.done .step-label { color:var(--success); }
+  .step-line { width:60px; height:2px; background:#E2E8F0; margin:0 6px; }
+  .step-line.done { background:var(--success); }
+
+  /* ===== Chart Wrapper ===== */
+  .chart-wrapper { position:relative; width:100%; }
+  .chart-wrapper canvas { width:100% !important; }
+
+  /* ===== Comparable Checkbox ===== */
+  .comp-check { display:flex; align-items:center; gap:10px; padding:12px 16px; border:1.5px solid var(--border); border-radius:10px; margin-bottom:10px; transition:.2s; cursor:pointer; }
+  .comp-check:hover { border-color:var(--primary); background:var(--primary-light); }
+  .comp-check.checked { border-color:var(--primary); background:var(--primary-light); }
+  .comp-check input[type=checkbox] { width:18px; height:18px; accent-color:var(--primary); }
+  .comp-check .info { flex:1; }
+  .comp-check .name { font-weight:600; font-size:14px; }
+  .comp-check .reason { font-size:12px; color:var(--text2); margin-top:2px; }
+  .comp-check .score { font-size:22px; font-weight:700; color:var(--primary); }
+
+  /* ===== Param Group ===== */
+  .param-group { display:flex; align-items:center; gap:12px; margin-bottom:12px; flex-wrap:wrap; }
+  .param-group label { font-size:13px; color:var(--text2); min-width:100px; }
+  .param-group input[type=range] { flex:1; max-width:200px; accent-color:var(--primary); }
+  .param-group .param-val { font-size:14px; font-weight:600; color:var(--primary); min-width:50px; }
+
+  /* ===== Responsive ===== */
+  @media(max-width:900px) {
+    .grid-2,.grid-3,.grid-4 { grid-template-columns:1fr; }
+    .top-nav { padding:0 12px; }
+    .page { padding:16px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ========== Top Navigation ========== -->
+<nav class="top-nav">
+  <div class="logo">📊 公司估值系统</div>
+  <div class="nav-items">
+    <button class="active" onclick="switchPage('page-list',this)">公司列表</button>
+    <button onclick="switchPage('page-detail',this)">公司详情</button>
+    <button onclick="switchPage('page-comparable',this)">可比公司</button>
+    <button onclick="switchPage('page-valuation',this)">估值分析</button>
+    <button onclick="switchPage('page-result',this)">估值结果</button>
+  </div>
+</nav>
+
+<!-- ========================================================== -->
+<!-- PAGE 1: 公司列表 (US-001)                                   -->
+<!-- ========================================================== -->
+<div id="page-list" class="page active">
+  <h1 class="page-title">目标公司选择</h1>
+  <p class="page-desc">按名称搜索或行业筛选，选定后进入公司详情开始估值分析</p>
+
+  <div class="search-bar">
+    <input type="text" placeholder="🔍  搜索公司名称 …" value="字节">
+    <select>
+      <option value="">全部行业</option>
+      <option selected>互联网</option>
+      <option>游戏</option>
+      <option>新能源</option>
+      <option>半导体</option>
+      <option>医药</option>
+    </select>
+    <button class="btn btn-primary">搜索</button>
+  </div>
+
+  <!-- Stats Row -->
+  <div class="grid-4" style="margin-bottom:20px;">
+    <div class="stat-card"><div class="label">公司总数</div><div class="value">128</div><div class="sub">持续更新中</div></div>
+    <div class="stat-card"><div class="label">已有估值</div><div class="value">47</div><div class="sub">占比 36.7%</div></div>
+    <div class="stat-card"><div class="label">覆盖行业</div><div class="value">12</div><div class="sub">6 大类</div></div>
+    <div class="stat-card"><div class="label">本周新增</div><div class="value">5</div><div class="sub warn">↑ 3 家</div></div>
+  </div>
+
+  <div class="grid-2">
+    <!-- Company Table -->
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>搜索结果（共 6 家匹配）</div>
+      <table>
+        <thead><tr><th>公司名称</th><th>行业</th><th>估值状态</th><th>操作</th></tr></thead>
+        <tbody>
+          <tr><td><strong>字节跳动</strong></td><td><span class="badge badge-blue">互联网</span></td><td><span class="badge badge-yellow">未估值</span></td><td><button class="btn btn-primary btn-sm" onclick="switchPage('page-detail',document.querySelectorAll('.nav-items button')[1])">选定 →</button></td></tr>
+          <tr><td><strong>米哈游</strong></td><td><span class="badge badge-blue">游戏</span></td><td><span class="badge badge-green">已估值</span></td><td><button class="btn btn-outline btn-sm">查看</button></td></tr>
+          <tr><td><strong>蚂蚁集团</strong></td><td><span class="badge badge-blue">金融科技</span></td><td><span class="badge badge-yellow">未估值</span></td><td><button class="btn btn-outline btn-sm">选定</button></td></tr>
+          <tr><td><strong>大疆创新</strong></td><td><span class="badge badge-blue">智能硬件</span></td><td><span class="badge badge-green">已估值</span></td><td><button class="btn btn-outline btn-sm">查看</button></td></tr>
+          <tr><td><strong>SpaceX</strong></td><td><span class="badge badge-blue">航天</span></td><td><span class="badge badge-yellow">未估值</span></td><td><button class="btn btn-outline btn-sm">选定</button></td></tr>
+          <tr><td><strong>Shein</strong></td><td><span class="badge badge-blue">电商</span></td><td><span class="badge badge-yellow">未估值</span></td><td><button class="btn btn-outline btn-sm">选定</button></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Industry Distribution Chart -->
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>行业分布（公司数量）</div>
+      <div class="chart-wrapper" style="height:320px;">
+        <canvas id="chartIndustry"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Second Row of Charts -->
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>估值状态分布</div>
+      <div class="chart-wrapper" style="height:260px;">
+        <canvas id="chartValStatus"></canvas>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>各行业平均 PE 对比</div>
+      <div class="chart-wrapper" style="height:260px;">
+        <canvas id="chartIndustryPE"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================================== -->
+<!-- PAGE 2: 公司详情 (US-002)                                   -->
+<!-- ========================================================== -->
+<div id="page-detail" class="page">
+  <h1 class="page-title">字节跳动 — 公司详情</h1>
+  <p class="page-desc">查看基本信息、行业概况和财务三表核心数据</p>
+
+  <!-- Stepper -->
+  <div class="stepper">
+    <div class="step done"><div class="circle">✓</div><div class="step-label">选定公司</div></div>
+    <div class="step-line done"></div>
+    <div class="step active"><div class="circle">2</div><div class="step-label">公司详情</div></div>
+    <div class="step-line"></div>
+    <div class="step"><div class="circle">3</div><div class="step-label">可比公司</div></div>
+    <div class="step-line"></div>
+    <div class="step"><div class="circle">4</div><div class="step-label">估值分析</div></div>
+    <div class="step-line"></div>
+    <div class="step"><div class="circle">5</div><div class="step-label">估值结果</div></div>
+  </div>
+
+  <!-- Basic Info + Industry -->
+  <div class="grid-3" style="margin-bottom:20px;">
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>基本信息</div>
+      <table>
+        <tr><td style="color:var(--text2)">公司名称</td><td><strong>字节跳动</strong></td></tr>
+        <tr><td style="color:var(--text2)">行业分类</td><td><span class="badge badge-blue">互联网</span></td></tr>
+        <tr><td style="color:var(--text2)">成立年份</td><td>2012</td></tr>
+        <tr><td style="color:var(--text2)">公司简介</td><td>全球领先的内容平台公司</td></tr>
+        <tr><td style="color:var(--text2)">财务数据</td><td><span class="badge badge-green">已导入</span></td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>行业概况</div>
+      <div class="stat-card" style="box-shadow:none;padding:0;margin-bottom:12px;">
+        <div class="label">行业平均 PE</div><div class="value" style="font-size:32px;">25.3<span style="font-size:14px;color:var(--text2)">x</span></div>
+      </div>
+      <div class="stat-card" style="box-shadow:none;padding:0;margin-bottom:12px;">
+        <div class="label">行业增速</div><div class="value" style="font-size:32px;color:var(--success);">12.5<span style="font-size:14px">%</span></div>
+      </div>
+      <div class="stat-card" style="box-shadow:none;padding:0;">
+        <div class="label">行业公司数量</div><div class="value" style="font-size:32px;">34</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>行业 PE 分布</div>
+      <div class="chart-wrapper" style="height:200px;">
+        <canvas id="chartIndustryPEDist"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Financial Stats Card Row -->
+  <div class="grid-4" style="margin-bottom:20px;">
+    <div class="stat-card"><div class="label">营收（万元）</div><div class="value">600 万</div><div class="sub">同比 +18%</div></div>
+    <div class="stat-card"><div class="label">净利润（万元）</div><div class="value">120 万</div><div class="sub">同比 +22%</div></div>
+    <div class="stat-card"><div class="label">总资产（万元）</div><div class="value">1,500 万</div><div class="sub">稳健增长</div></div>
+    <div class="stat-card"><div class="label">净资产（万元）</div><div class="value">800 万</div><div class="sub">同比 +15%</div></div>
+  </div>
+
+  <!-- Financial Charts -->
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>营收与净利润趋势（近 5 年）</div>
+      <div class="chart-wrapper" style="height:280px;">
+        <canvas id="chartRevProfit"></canvas>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>资产结构变化</div>
+      <div class="chart-wrapper" style="height:280px;">
+        <canvas id="chartAssets"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>经营现金流趋势</div>
+      <div class="chart-wrapper" style="height:240px;">
+        <canvas id="chartCashflow"></canvas>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>关键财务比率</div>
+      <div class="chart-wrapper" style="height:240px;">
+        <canvas id="chartRatios"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Financial Table -->
+  <div class="card">
+    <div class="card-title"><span class="dot"></span>财务三表核心数据（单位：万元）
+      <button class="btn btn-outline btn-sm" style="margin-left:auto;">📤 导入财务数据</button>
+    </div>
+    <table>
+      <thead><tr><th>期间</th><th>营收</th><th>净利润</th><th>总资产</th><th>净资产</th><th>经营现金流</th></tr></thead>
+      <tbody>
+        <tr><td>2025-FY</td><td>6,000,000</td><td>1,200,000</td><td>15,000,000</td><td>8,000,000</td><td>1,500,000</td></tr>
+        <tr><td>2024-FY</td><td>5,100,000</td><td>980,000</td><td>12,800,000</td><td>6,950,000</td><td>1,250,000</td></tr>
+        <tr><td>2023-FY</td><td>4,200,000</td><td>750,000</td><td>10,500,000</td><td>5,800,000</td><td>980,000</td></tr>
+        <tr><td>2022-FY</td><td>3,500,000</td><td>520,000</td><td>8,900,000</td><td>4,700,000</td><td>720,000</td></tr>
+        <tr><td>2021-FY</td><td>2,800,000</td><td>350,000</td><td>7,200,000</td><td>3,600,000</td><td>550,000</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div style="text-align:right;margin-top:8px;">
+    <button class="btn btn-primary" onclick="switchPage('page-comparable',document.querySelectorAll('.nav-items button')[2])">下一步：选择可比公司 →</button>
+  </div>
+</div>
+
+<!-- ========================================================== -->
+<!-- PAGE 3: 可比公司推荐 (US-003)                               -->
+<!-- ========================================================== -->
+<div id="page-comparable" class="page">
+  <h1 class="page-title">可比公司 — AI 推荐与确认</h1>
+  <p class="page-desc">系统基于行业、规模、业务模式推荐 4~6 家可比公司，您可勾选确认或手动增删</p>
+
+  <!-- Stepper -->
+  <div class="stepper">
+    <div class="step done"><div class="circle">✓</div><div class="step-label">选定公司</div></div>
+    <div class="step-line done"></div>
+    <div class="step done"><div class="circle">✓</div><div class="step-label">公司详情</div></div>
+    <div class="step-line done"></div>
+    <div class="step active"><div class="circle">3</div><div class="step-label">可比公司</div></div>
+    <div class="step-line"></div>
+    <div class="step"><div class="circle">4</div><div class="step-label">估值分析</div></div>
+    <div class="step-line"></div>
+    <div class="step"><div class="circle">5</div><div class="step-label">估值结果</div></div>
+  </div>
+
+  <div class="grid-2">
+    <!-- Left: AI Recommendations -->
+    <div>
+      <div class="ai-card" style="margin-bottom:16px;">
+        <div class="ai-label"><span>🤖</span> AI 可比公司推荐</div>
+        <p>基于字节跳动的行业属性（互联网）、营收规模（600亿）和业务模式（广告+电商），为您推荐以下 4 家可比上市公司：</p>
+      </div>
+
+      <div class="comp-check checked">
+        <input type="checkbox" checked>
+        <div class="info">
+          <div class="name">腾讯控股 <span class="badge badge-blue" style="font-size:11px;">互联网</span></div>
+          <div class="reason">同为互联网平台型公司，营收规模相近</div>
+        </div>
+        <div class="score">92%</div>
+      </div>
+      <div class="comp-check checked">
+        <input type="checkbox" checked>
+        <div class="info">
+          <div class="name">快手科技 <span class="badge badge-blue" style="font-size:11px;">互联网</span></div>
+          <div class="reason">短视频赛道直接竞争对手</div>
+        </div>
+        <div class="score">88%</div>
+      </div>
+      <div class="comp-check checked">
+        <input type="checkbox" checked>
+        <div class="info">
+          <div class="name">哔哩哔哩 <span class="badge badge-blue" style="font-size:11px;">互联网</span></div>
+          <div class="reason">内容平台业务模式相似</div>
+        </div>
+        <div class="score">81%</div>
+      </div>
+      <div class="comp-check checked">
+        <input type="checkbox" checked>
+        <div class="info">
+          <div class="name">Meta Platforms <span class="badge badge-blue" style="font-size:11px;">互联网</span></div>
+          <div class="reason">全球社交+广告业务对标</div>
+        </div>
+        <div class="score">78%</div>
+      </div>
+
+      <div style="margin-top:16px;display:flex;gap:10px;">
+        <button class="btn btn-outline btn-sm">＋ 手动添加公司</button>
+        <button class="btn btn-primary btn-sm">🔄 重新推荐</button>
+      </div>
+    </div>
+
+    <!-- Right: Charts -->
+    <div>
+      <div class="card">
+        <div class="card-title"><span class="dot"></span>可比公司相似度雷达图</div>
+        <div class="chart-wrapper" style="height:280px;">
+          <canvas id="chartRadar"></canvas>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title"><span class="dot"></span>可比公司核心指标对比</div>
+        <div class="chart-wrapper" style="height:260px;">
+          <canvas id="chartCompBar"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Comparable Company Detail Table -->
+  <div class="card" style="margin-top:4px;">
+    <div class="card-title"><span class="dot"></span>可比公司财务指标明细</div>
+    <table>
+      <thead><tr><th>公司</th><th>行业</th><th>股价</th><th>PE</th><th>P/B</th><th>净利润（万元）</th><th>净资产（万元）</th><th>营收（万元）</th></tr></thead>
+      <tbody>
+        <tr><td><strong>腾讯控股</strong></td><td>互联网</td><td>380.0</td><td>22.5</td><td>4.8</td><td>12,500,000</td><td>5,800,000</td><td>55,000,000</td></tr>
+        <tr><td><strong>快手科技</strong></td><td>互联网</td><td>55.0</td><td>28.3</td><td>3.2</td><td>800,000</td><td>950,000</td><td>11,000,000</td></tr>
+        <tr><td><strong>哔哩哔哩</strong></td><td>互联网</td><td>18.5</td><td>35.2</td><td>2.1</td><td>250,000</td><td>420,000</td><td>6,500,000</td></tr>
+        <tr><td><strong>Meta</strong></td><td>互联网</td><td>520.0</td><td>18.8</td><td>6.5</td><td>39,000,000</td><td>12,000,000</td><td>134,000,000</td></tr>
+      </tbody>
+    </table>
+    <div style="margin-top:12px;display:flex;gap:10px;justify-content:space-between;align-items:center;">
+      <div>
+        <span style="font-size:13px;color:var(--text2);">已选中：</span>
+        <span class="tag">腾讯控股 <span class="remove">×</span></span>
+        <span class="tag">快手科技 <span class="remove">×</span></span>
+        <span class="tag">哔哩哔哩 <span class="remove">×</span></span>
+        <span class="tag">Meta <span class="remove">×</span></span>
+      </div>
+      <button class="btn btn-primary" onclick="switchPage('page-valuation',document.querySelectorAll('.nav-items button')[3])">确认并开始估值 →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================================== -->
+<!-- PAGE 4: 估值分析 (US-004)                                   -->
+<!-- ========================================================== -->
+<div id="page-valuation" class="page">
+  <h1 class="page-title">多方法估值分析</h1>
+  <p class="page-desc">基于 4 家已确认可比公司，并行运行 PE 可比法、DCF 法、P/B 法</p>
+
+  <!-- Stepper -->
+  <div class="stepper">
+    <div class="step done"><div class="circle">✓</div><div class="step-label">选定公司</div></div>
+    <div class="step-line done"></div>
+    <div class="step done"><div class="circle">✓</div><div class="step-label">公司详情</div></div>
+    <div class="step-line done"></div>
+    <div class="step done"><div class="circle">✓</div><div class="step-label">可比公司</div></div>
+    <div class="step-line done"></div>
+    <div class="step active"><div class="circle">4</div><div class="step-label">估值分析</div></div>
+    <div class="step-line"></div>
+    <div class="step"><div class="circle">5</div><div class="step-label">估值结果</div></div>
+  </div>
+
+  <!-- Target Info -->
+  <div class="grid-4" style="margin-bottom:20px;">
+    <div class="stat-card"><div class="label">目标公司</div><div class="value" style="font-size:20px;">字节跳动</div></div>
+    <div class="stat-card"><div class="label">目标净利润</div><div class="value" style="font-size:20px;">120 万</div></div>
+    <div class="stat-card"><div class="label">目标净资产</div><div class="value" style="font-size:20px;">800 万</div></div>
+    <div class="stat-card"><div class="label">可比公司</div><div class="value" style="font-size:20px;">4 家</div></div>
+  </div>
+
+  <!-- Three Method Cards -->
+  <div class="grid-3">
+    <!-- PE Method -->
+    <div class="card method-card">
+      <div class="card-title"><span class="dot"></span>PE 可比法</div>
+      <div style="text-align:center;margin-bottom:16px;">
+        <div style="font-size:12px;color:var(--text2);">估值中位数</div>
+        <div style="font-size:32px;font-weight:800;color:var(--primary);">2.7 万亿</div>
+        <div style="font-size:12px;color:var(--text2);">区间：2.4 万亿 ~ 3.4 万亿</div>
+      </div>
+      <table style="font-size:13px;">
+        <tr><td style="color:var(--text2)">可比 PE 中位数</td><td><strong>22.5x</strong></td></tr>
+        <tr><td style="color:var(--text2)">PE 范围</td><td>18.0 ~ 28.3</td></tr>
+        <tr><td style="color:var(--text2)">目标净利润</td><td>1,200,000 万</td></tr>
+      </table>
+      <div style="margin-top:12px;padding:10px;background:#F8FAFC;border-radius:8px;font-size:12px;color:var(--text2);line-height:1.6;">
+        💡 取4家可比公司PE中位数22.5，乘以目标公司净利润1,200,000万元，得估值27,000,000万元
+      </div>
+    </div>
+
+    <!-- DCF Method -->
+    <div class="card method-card dcf">
+      <div class="card-title"><span class="dot"></span>DCF 现金流折现法</div>
+      <div style="text-align:center;margin-bottom:16px;">
+        <div style="font-size:12px;color:var(--text2);">估值中位数</div>
+        <div style="font-size:32px;font-weight:800;color:var(--success);">2.5 万亿</div>
+        <div style="font-size:12px;color:var(--text2);">区间：2.0 万亿 ~ 3.0 万亿</div>
+      </div>
+      <div class="param-group"><label>折现率</label><input type="range" min="1" max="30" value="10"><span class="param-val">10%</span></div>
+      <div class="param-group"><label>永续增长率</label><input type="range" min="0" max="15" value="5"><span class="param-val">5%</span></div>
+      <div class="param-group"><label>预测年数</label><input type="range" min="3" max="10" value="5"><span class="param-val">5 年</span></div>
+      <div style="margin-top:8px;text-align:right;">
+        <button class="btn btn-outline btn-sm">🔄 调参重算</button>
+      </div>
+    </div>
+
+    <!-- P/B Method -->
+    <div class="card method-card pb">
+      <div class="card-title"><span class="dot"></span>P/B 市净率法</div>
+      <div style="text-align:center;margin-bottom:16px;">
+        <div style="font-size:12px;color:var(--text2);">估值中位数</div>
+        <div style="font-size:32px;font-weight:800;color:var(--warning);">3.2 万亿</div>
+        <div style="font-size:12px;color:var(--text2);">区间：2.56 万亿 ~ 3.84 万亿</div>
+      </div>
+      <table style="font-size:13px;">
+        <tr><td style="color:var(--text2)">可比 P/B 中位数</td><td><strong>4.0x</strong></td></tr>
+        <tr><td style="color:var(--text2)">P/B 范围</td><td>2.1 ~ 6.5</td></tr>
+        <tr><td style="color:var(--text2)">目标净资产</td><td>8,000,000 万</td></tr>
+      </table>
+      <div style="margin-top:12px;padding:10px;background:#F8FAFC;border-radius:8px;font-size:12px;color:var(--text2);line-height:1.6;">
+        💡 取可比公司PB中位数4.0，乘以目标净资产8,000,000万，得估值32,000,000万元
+      </div>
+    </div>
+  </div>
+
+  <!-- Valuation Comparison Charts -->
+  <div class="grid-2" style="margin-top:4px;">
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>三种估值方法区间对比</div>
+      <div class="chart-wrapper" style="height:300px;">
+        <canvas id="chartValCompare"></canvas>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>可比公司 PE / P/B 散点分布</div>
+      <div class="chart-wrapper" style="height:300px;">
+        <canvas id="chartScatter"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot"></span>DCF 现金流预测（单位：万元）</div>
+    <div class="chart-wrapper" style="height:260px;">
+      <canvas id="chartDCF"></canvas>
+    </div>
+  </div>
+
+  <div style="text-align:right;margin-top:8px;">
+    <button class="btn btn-primary" onclick="switchPage('page-result',document.querySelectorAll('.nav-items button')[4])">查看综合结果 →</button>
+  </div>
+</div>
+
+<!-- ========================================================== -->
+<!-- PAGE 5: 估值结果 (US-005)                                   -->
+<!-- ========================================================== -->
+<div id="page-result" class="page">
+  <h1 class="page-title">估值结果综合展示</h1>
+  <p class="page-desc">字节跳动 — 多方法估值汇总、估值中枢与 AI 推荐</p>
+
+  <!-- Stepper -->
+  <div class="stepper">
+    <div class="step done"><div class="circle">✓</div><div class="step-label">选定公司</div></div>
+    <div class="step-line done"></div>
+    <div class="step done"><div class="circle">✓</div><div class="step-label">公司详情</div></div>
+    <div class="step-line done"></div>
+    <div class="step done"><div class="circle">✓</div><div class="step-label">可比公司</div></div>
+    <div class="step-line done"></div>
+    <div class="step done"><div class="circle">✓</div><div class="step-label">估值分析</div></div>
+    <div class="step-line done"></div>
+    <div class="step active"><div class="circle">5</div><div class="step-label">估值结果</div></div>
+  </div>
+
+  <!-- Big Center Value -->
+  <div class="card" style="text-align:center;padding:36px;">
+    <div style="font-size:14px;color:var(--text2);margin-bottom:4px;">估值中枢（三种方法加权平均）</div>
+    <div style="font-size:52px;font-weight:800;color:var(--primary);line-height:1.2;">2.8 万亿元</div>
+    <div style="font-size:14px;color:var(--text2);margin-top:4px;">区间：2.0 万亿 ~ 3.84 万亿</div>
+    <div style="display:flex;justify-content:center;gap:32px;margin-top:20px;">
+      <div><div style="font-size:12px;color:var(--text2);">PE 可比法</div><div style="font-size:20px;font-weight:700;color:var(--primary);">2.7 万亿</div></div>
+      <div style="width:1px;background:var(--border);"></div>
+      <div><div style="font-size:12px;color:var(--text2);">DCF 法</div><div style="font-size:20px;font-weight:700;color:var(--success);">2.5 万亿</div></div>
+      <div style="width:1px;background:var(--border);"></div>
+      <div><div style="font-size:12px;color:var(--text2);">P/B 法</div><div style="font-size:20px;font-weight:700;color:var(--warning);">3.2 万亿</div></div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <!-- Methods Summary Table -->
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>各方法估值摘要</div>
+      <table>
+        <thead><tr><th>方法</th><th>估值区间</th><th>中位数</th><th>权重</th></tr></thead>
+        <tbody>
+          <tr><td><span class="badge badge-blue">PE 可比法</span></td><td>2.4万亿 ~ 3.4万亿</td><td><strong>2.7万亿</strong></td><td>40%</td></tr>
+          <tr><td><span class="badge badge-green">DCF 法</span></td><td>2.0万亿 ~ 3.0万亿</td><td><strong>2.5万亿</strong></td><td>35%</td></tr>
+          <tr><td><span class="badge badge-yellow">P/B 法</span></td><td>2.56万亿 ~ 3.84万亿</td><td><strong>3.2万亿</strong></td><td>25%</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- AI Recommendation -->
+    <div class="ai-card" style="height:fit-content;">
+      <div class="ai-label"><span>🤖</span> AI 估值总结与推荐</div>
+      <p style="margin-bottom:12px;"><strong>推荐方法：PE 可比法</strong></p>
+      <p>综合三种估值方法，字节跳动估值中枢约 <strong>2.8 万亿元</strong>。</p>
+      <p style="margin-top:8px;">考虑到公司盈利能力稳定且可比公司样本充足，<strong>PE 可比法（中位数 2.7 万亿）最具参考价值</strong>。DCF 法受折现率假设影响较大，P/B 法因轻资产属性偏高，建议以 PE 法为锚。</p>
+      <div style="margin-top:14px;padding-top:12px;border-top:1px solid #C7D2FE;">
+        <div style="font-size:12px;color:var(--text2);margin-bottom:4px;">置信度</div>
+        <div class="progress-bar" style="height:10px;"><div class="fill" style="width:82%;background:var(--primary);"></div></div>
+        <div style="font-size:13px;font-weight:600;color:var(--primary);margin-top:4px;">82% — 高置信度</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Result Charts -->
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>估值区间瀑布图</div>
+      <div class="chart-wrapper" style="height:300px;">
+        <canvas id="chartWaterfall"></canvas>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>各方法估值占比</div>
+      <div class="chart-wrapper" style="height:300px;">
+        <canvas id="chartMethodPie"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>敏感性分析 — 折现率 vs 增长率对估值影响</div>
+      <div class="chart-wrapper" style="height:280px;">
+        <canvas id="chartSensitivity"></canvas>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>估值方法可信度评分</div>
+      <div class="chart-wrapper" style="height:280px;">
+        <canvas id="chartConfidence"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Actions -->
+  <div class="card" style="display:flex;gap:12px;justify-content:space-between;align-items:center;">
+    <div style="display:flex;gap:10px;">
+      <button class="btn btn-outline" onclick="switchPage('page-comparable',document.querySelectorAll('.nav-items button')[2])">← 调整可比公司</button>
+      <button class="btn btn-outline" onclick="switchPage('page-valuation',document.querySelectorAll('.nav-items button')[3])">← 调整参数重算</button>
+    </div>
+    <div style="display:flex;gap:10px;">
+      <button class="btn btn-outline">📋 导出 JSON</button>
+      <button class="btn btn-primary">📄 导出估值报告</button>
+    </div>
+  </div>
+</div>
+
+<!-- ========== JavaScript ========== -->
+<script>
+// ===== Page Switching =====
+function switchPage(pageId, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(pageId).classList.add('active');
+  document.querySelectorAll('.nav-items button').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+// ===== Chart Defaults =====
+Chart.defaults.font.family = '-apple-system, "PingFang SC", sans-serif';
+Chart.defaults.font.size = 12;
+Chart.defaults.plugins.legend.labels.usePointStyle = true;
+Chart.defaults.plugins.legend.labels.padding = 16;
+
+const COLORS = {
+  primary: '#4F6BF6', primaryBg: 'rgba(79,107,246,0.15)',
+  success: '#22C55E', successBg: 'rgba(34,197,94,0.15)',
+  warning: '#F59E0B', warningBg: 'rgba(245,158,11,0.15)',
+  danger: '#EF4444', dangerBg: 'rgba(239,68,68,0.15)',
+  purple: '#8B5CF6', purpleBg: 'rgba(139,92,246,0.15)',
+  cyan: '#06B6D4',
+};
+
+// ============ PAGE 1 Charts ============
+
+// Industry Distribution (Doughnut)
+new Chart(document.getElementById('chartIndustry'), {
+  type: 'doughnut',
+  data: {
+    labels: ['互联网', '游戏', '新能源', '半导体', '医药', '金融科技', '智能硬件', '其他'],
+    datasets: [{
+      data: [34, 18, 22, 15, 12, 10, 8, 9],
+      backgroundColor: ['#4F6BF6','#8B5CF6','#22C55E','#06B6D4','#F59E0B','#EF4444','#EC4899','#94A3B8'],
+      borderWidth: 2, borderColor: '#fff',
+    }]
+  },
+  options: { responsive:true, maintainAspectRatio:false, plugins:{ legend:{ position:'right' } } }
+});
+
+// Valuation Status (Pie)
+new Chart(document.getElementById('chartValStatus'), {
+  type: 'pie',
+  data: {
+    labels: ['已估值', '未估值'],
+    datasets: [{ data: [47, 81], backgroundColor: [COLORS.primary, '#E2E8F0'], borderWidth: 2, borderColor: '#fff' }]
+  },
+  options: { responsive:true, maintainAspectRatio:false }
+});
+
+// Industry PE Bar
+new Chart(document.getElementById('chartIndustryPE'), {
+  type: 'bar',
+  data: {
+    labels: ['互联网','游戏','新能源','半导体','医药','金融科技'],
+    datasets: [{ label:'平均 PE', data:[25.3,32.1,45.6,38.2,28.9,15.4], backgroundColor: COLORS.primaryBg, borderColor: COLORS.primary, borderWidth:1.5, borderRadius:6 }]
+  },
+  options: { responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{y:{beginAtZero:true,grid:{color:'#F1F5F9'}},x:{grid:{display:false}}} }
+});
+
+// ============ PAGE 2 Charts ============
+
+// Industry PE Distribution (Histogram-like bar)
+new Chart(document.getElementById('chartIndustryPEDist'), {
+  type: 'bar',
+  data: {
+    labels: ['<15','15-20','20-25','25-30','30-35','>35'],
+    datasets: [{ label:'公司数', data:[3,5,10,8,5,3], backgroundColor: COLORS.primaryBg, borderColor: COLORS.primary, borderWidth:1.5, borderRadius:4 }]
+  },
+  options: { responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{y:{beginAtZero:true,grid:{color:'#F1F5F9'}},x:{grid:{display:false}}} }
+});
+
+// Revenue & Profit Trend (Line + Bar)
+new Chart(document.getElementById('chartRevProfit'), {
+  type: 'bar',
+  data: {
+    labels: ['2021','2022','2023','2024','2025'],
+    datasets: [
+      { type:'bar', label:'营收', data:[2800000,3500000,4200000,5100000,6000000], backgroundColor:COLORS.primaryBg, borderColor:COLORS.primary, borderWidth:1.5, borderRadius:6, yAxisID:'y' },
+      { type:'line', label:'净利润', data:[350000,520000,750000,980000,1200000], borderColor:COLORS.success, backgroundColor:COLORS.successBg, pointRadius:4, tension:.3, fill:true, yAxisID:'y1' }
+    ]
+  },
+  options: {
+    responsive:true, maintainAspectRatio:false,
+    scales: {
+      y:{position:'left',beginAtZero:true,grid:{color:'#F1F5F9'},ticks:{callback:v=>(v/10000)+'万'}},
+      y1:{position:'right',beginAtZero:true,grid:{display:false},ticks:{callback:v=>(v/10000)+'万'}},
+      x:{grid:{display:false}}
+    }
+  }
+});
+
+// Assets (Stacked Bar)
+new Chart(document.getElementById('chartAssets'), {
+  type: 'bar',
+  data: {
+    labels: ['2021','2022','2023','2024','2025'],
+    datasets: [
+      { label:'净资产', data:[3600000,4700000,5800000,6950000,8000000], backgroundColor:COLORS.primary, borderRadius:6 },
+      { label:'负债', data:[3600000,4200000,4700000,5850000,7000000], backgroundColor:'#CBD5E1', borderRadius:6 }
+    ]
+  },
+  options: { responsive:true, maintainAspectRatio:false, plugins:{legend:{position:'top'}}, scales:{y:{stacked:true,beginAtZero:true,grid:{color:'#F1F5F9'},ticks:{callback:v=>(v/10000)+'万'}},x:{stacked:true,grid:{display:false}}} }
+});
+
+// Cashflow (Area)
+new Chart(document.getElementById('chartCashflow'), {
+  type: 'line',
+  data: {
+    labels: ['2021','2022','2023','2024','2025'],
+    datasets: [{ label:'经营现金流', data:[550000,720000,980000,1250000,1500000], borderColor:COLORS.success, backgroundColor:COLORS.successBg, fill:true, tension:.4, pointRadius:5 }]
+  },
+  options: { responsive:true, maintainAspectRatio:false, scales:{y:{beginAtZero:true,grid:{color:'#F1F5F9'},ticks:{callback:v=>(v/10000)+'万'}},x:{grid:{display:false}}} }
+});
+
+// Key Ratios (Radar)
+new Chart(document.getElementById('chartRatios'), {
+  type: 'radar',
+  data: {
+    labels: ['净利润率','资产回报率','营收增速','现金流比率','资产负债率'],
+    datasets: [
+      { label:'字节跳动', data:[20,8,18,25,47], borderColor:COLORS.primary, backgroundColor:COLORS.primaryBg, pointRadius:4 },
+      { label:'行业平均', data:[15,6,12,20,52], borderColor:COLORS.warning, backgroundColor:COLORS.warningBg, pointRadius:4 }
+    ]
+  },
+  options: { responsive:true, maintainAspectRatio:false, scales:{r:{beginAtZero:true,grid:{color:'#E2E8F0'},ticks:{display:false}}} }
+});
+
+// ============ PAGE 3 Charts ============
+
+// Radar: Similarity
+new Chart(document.getElementById('chartRadar'), {
+  type: 'radar',
+  data: {
+    labels: ['行业相似度','规模匹配','业务模式','盈利能力','增长趋势'],
+    datasets: [
+      { label:'腾讯控股', data:[95,85,80,90,75], borderColor:COLORS.primary, backgroundColor:'rgba(79,107,246,.1)', pointRadius:4 },
+      { label:'快手科技', data:[98,60,95,55,85], borderColor:COLORS.success, backgroundColor:'rgba(34,197,94,.1)', pointRadius:4 },
+      { label:'哔哩哔哩', data:[90,40,85,35,80], borderColor:COLORS.warning, backgroundColor:'rgba(245,158,11,.1)', pointRadius:4 },
+      { label:'Meta', data:[70,95,75,95,70], borderColor:COLORS.purple, backgroundColor:'rgba(139,92,246,.1)', pointRadius:4 },
+    ]
+  },
+  options: { responsive:true, maintainAspectRatio:false, scales:{r:{beginAtZero:true,max:100,grid:{color:'#E2E8F0'},ticks:{display:false}}} }
+});
+
+// Comparable Bar: PE & P/B
+new Chart(document.getElementById('chartCompBar'), {
+  type: 'bar',
+  data: {
+    labels: ['腾讯控股','快手科技','哔哩哔哩','Meta'],
+    datasets: [
+      { label:'PE', data:[22.5,28.3,35.2,18.8], backgroundColor:COLORS.primaryBg, borderColor:COLORS.primary, borderWidth:1.5, borderRadius:6 },
+      { label:'P/B', data:[4.8,3.2,2.1,6.5], backgroundColor:COLORS.warningBg, borderColor:COLORS.warning, borderWidth:1.5, borderRadius:6 }
+    ]
+  },
+  options: { responsive:true, maintainAspectRatio:false, scales:{y:{beginAtZero:true,grid:{color:'#F1F5F9'}},x:{grid:{display:false}}} }
+});
+
+// ============ PAGE 4 Charts ============
+
+// Valuation Range Comparison (Horizontal bar)
+new Chart(document.getElementById('chartValCompare'), {
+  type: 'bar',
+  data: {
+    labels: ['PE 可比法','DCF 法','P/B 法'],
+    datasets: [
+      { label:'估值下限', data:[2.4,2.0,2.56], backgroundColor:['rgba(79,107,246,.3)','rgba(34,197,94,.3)','rgba(245,158,11,.3)'], borderRadius:6 },
+      { label:'估值中位', data:[0.3,0.5,0.64], backgroundColor:[COLORS.primary,COLORS.success,COLORS.warning], borderRadius:6 },
+      { label:'估值上限', data:[0.7,0.5,0.64], backgroundColor:['rgba(79,107,246,.5)','rgba(34,197,94,.5)','rgba(245,158,11,.5)'], borderRadius:6 },
+    ]
+  },
+  options: {
+    indexAxis:'y', responsive:true, maintainAspectRatio:false,
+    plugins:{ legend:{position:'bottom'}, tooltip:{callbacks:{label:ctx=>{return ctx.dataset.label+': '+ctx.raw+'万亿'}}} },
+    scales:{x:{stacked:true,grid:{color:'#F1F5F9'},title:{display:true,text:'万亿元'}},y:{stacked:true,grid:{display:false}}}
+  }
+});
+
+// PE vs P/B Scatter (Bubble)
+new Chart(document.getElementById('chartScatter'), {
+  type: 'bubble',
+  data: {
+    datasets: [
+      { label:'腾讯', data:[{x:22.5,y:4.8,r:18}], backgroundColor:'rgba(79,107,246,.6)' },
+      { label:'快手', data:[{x:28.3,y:3.2,r:12}], backgroundColor:'rgba(34,197,94,.6)' },
+      { label:'B站', data:[{x:35.2,y:2.1,r:8}], backgroundColor:'rgba(245,158,11,.6)' },
+      { label:'Meta', data:[{x:18.8,y:6.5,r:22}], backgroundColor:'rgba(139,92,246,.6)' },
+    ]
+  },
+  options: {
+    responsive:true, maintainAspectRatio:false,
+    scales:{x:{title:{display:true,text:'PE'},grid:{color:'#F1F5F9'}},y:{title:{display:true,text:'P/B'},grid:{color:'#F1F5F9'}}}
+  }
+});
+
+// DCF Cashflow Projection
+new Chart(document.getElementById('chartDCF'), {
+  type: 'bar',
+  data: {
+    labels: ['基期(2025)','2026E','2027E','2028E','2029E','2030E','终值'],
+    datasets: [
+      { type:'bar', label:'预测现金流', data:[1500000,1575000,1653750,1736438,1823259,1914422,null], backgroundColor:COLORS.successBg, borderColor:COLORS.success, borderWidth:1.5, borderRadius:6 },
+      { type:'bar', label:'终值', data:[null,null,null,null,null,null,38288448], backgroundColor:COLORS.purpleBg, borderColor:COLORS.purple, borderWidth:1.5, borderRadius:6 },
+      { type:'line', label:'折现后', data:[1500000,1431818,1368760,1308728,1251598,1197227,23775000], borderColor:COLORS.primary, pointRadius:5, tension:.3 }
+    ]
+  },
+  options: { responsive:true, maintainAspectRatio:false, scales:{y:{beginAtZero:true,grid:{color:'#F1F5F9'},ticks:{callback:v=>v>=10000?(v/10000)+'万':v}},x:{grid:{display:false}}} }
+});
+
+// ============ PAGE 5 Charts ============
+
+// Waterfall-like (horizontal floating bars)
+new Chart(document.getElementById('chartWaterfall'), {
+  type: 'bar',
+  data: {
+    labels: ['PE 可比法','DCF 法','P/B 法','估值中枢'],
+    datasets: [{
+      label:'估值区间（万亿）',
+      data: [
+        [2.4, 3.4],
+        [2.0, 3.0],
+        [2.56, 3.84],
+        [2.6, 3.0]
+      ],
+      backgroundColor: [COLORS.primary, COLORS.success, COLORS.warning, '#8B5CF6'],
+      borderRadius: 6,
+      barPercentage: 0.6,
+    }]
+  },
+  options: {
+    indexAxis:'y', responsive:true, maintainAspectRatio:false,
+    plugins:{ legend:{display:false}, tooltip:{callbacks:{label:ctx=>'区间: '+ctx.raw[0]+' ~ '+ctx.raw[1]+' 万亿'}} },
+    scales:{x:{min:1.5,max:4.5,grid:{color:'#F1F5F9'},title:{display:true,text:'万亿元'}},y:{grid:{display:false}}}
+  }
+});
+
+// Method Pie
+new Chart(document.getElementById('chartMethodPie'), {
+  type: 'doughnut',
+  data: {
+    labels: ['PE 可比法 (40%)','DCF 法 (35%)','P/B 法 (25%)'],
+    datasets: [{ data:[40,35,25], backgroundColor:[COLORS.primary,COLORS.success,COLORS.warning], borderWidth:3, borderColor:'#fff' }]
+  },
+  options: { responsive:true, maintainAspectRatio:false, cutout:'55%', plugins:{legend:{position:'bottom'}} }
+});
+
+// Sensitivity Analysis (multi-line)
+new Chart(document.getElementById('chartSensitivity'), {
+  type: 'line',
+  data: {
+    labels: ['8%','9%','10%','11%','12%','13%','14%'],
+    datasets: [
+      { label:'增长率 3%', data:[3.1,2.85,2.6,2.4,2.22,2.08,1.95], borderColor:COLORS.primary, tension:.3, pointRadius:4 },
+      { label:'增长率 5%', data:[3.5,3.15,2.85,2.6,2.4,2.22,2.08], borderColor:COLORS.success, tension:.3, pointRadius:4 },
+      { label:'增长率 7%', data:[4.1,3.6,3.2,2.88,2.62,2.4,2.22], borderColor:COLORS.warning, tension:.3, pointRadius:4 },
+    ]
+  },
+  options: {
+    responsive:true, maintainAspectRatio:false,
+    scales:{
+      x:{title:{display:true,text:'折现率'},grid:{color:'#F1F5F9'}},
+      y:{title:{display:true,text:'估值（万亿）'},grid:{color:'#F1F5F9'}}
+    }
+  }
+});
+
+// Confidence (Horizontal Bar)
+new Chart(document.getElementById('chartConfidence'), {
+  type: 'bar',
+  data: {
+    labels: ['PE 可比法','DCF 法','P/B 法'],
+    datasets: [
+      { label:'数据质量', data:[90,75,70], backgroundColor:COLORS.primaryBg, borderColor:COLORS.primary, borderWidth:1.5, borderRadius:6 },
+      { label:'方法适用性', data:[85,80,60], backgroundColor:COLORS.successBg, borderColor:COLORS.success, borderWidth:1.5, borderRadius:6 },
+      { label:'样本充足度', data:[88,70,72], backgroundColor:COLORS.warningBg, borderColor:COLORS.warning, borderWidth:1.5, borderRadius:6 }
+    ]
+  },
+  options: {
+    indexAxis:'y', responsive:true, maintainAspectRatio:false,
+    scales:{x:{max:100,grid:{color:'#F1F5F9'},title:{display:true,text:'评分'}},y:{grid:{display:false}}}
+  }
+});
+
+// ===== Interactive range sliders =====
+document.querySelectorAll('.param-group input[type=range]').forEach(slider => {
+  slider.addEventListener('input', function() {
+    const val = this.value;
+    const span = this.parentElement.querySelector('.param-val');
+    if (this.max == 10) span.textContent = val + ' 年';
+    else span.textContent = val + '%';
+  });
+});
+
+// ===== Checkbox toggle =====
+document.querySelectorAll('.comp-check').forEach(el => {
+  el.addEventListener('click', function(e) {
+    if (e.target.tagName === 'INPUT') return;
+    const cb = this.querySelector('input[type=checkbox]');
+    cb.checked = !cb.checked;
+    this.classList.toggle('checked', cb.checked);
+  });
+});
+</script>
+</body>
+</html>
