@@ -7,7 +7,7 @@ AI 培训 Day 3 Lab 提交仓库。每个小组通过 **Pull Request** 把自己
 - **必须通过 Pull Request 提交**，**禁止**直接 push 到 `main`（会被分支保护拒绝）
 - **不要**通过创建长期分支的方式"占位"，每次改动 → fork 或本地分支 → 开 PR → 合入 `main`
 - PR 标题格式：`[day3] group<N>: <项目简述>`
-- 代码位置：`group<N>/day3/` 目录下
+- 代码位置：`group<N>/` 目录下
 - 每个大组包含 **2 个项目组**，所以 `group<N>/day3/` 下应有 **2 个 project**，建议命名 `project-1/` 和 `project-2/`（或按项目主题命名）
 - 每个 project 必须有 `README.md`，包含：
   - **小组名单**（姓名 + GitHub 账号）
