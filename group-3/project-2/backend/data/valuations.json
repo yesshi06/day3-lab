@@ -1,0 +1,709 @@
+{
+  "comp_002": {
+    "company_name": "米哈游",
+    "last_valued_at": "2026-04-15 14:16:42",
+    "target_net_profit": 400000,
+    "target_net_assets": 1500000,
+    "base_cashflow": 450000,
+    "comparable_count": 4,
+    "methods": [
+      {
+        "method_name": "pe_comparable",
+        "display_name": "PE 可比法",
+        "valuation_low": 6056000,
+        "valuation_mid": 9296000,
+        "valuation_high": 24568000,
+        "params": {
+          "comparable_pe_median": 23.24,
+          "comparable_pe_range": [
+            15.14,
+            61.42
+          ],
+          "comparable_companies": [
+            "哔哩哔哩",
+            "Meta Platforms",
+            "腾讯控股",
+            "网易"
+          ]
+        },
+        "calculation_detail": "取4家可比公司PE中位数23.24，乘以目标公司净利润400,000万元，得估值9,296,000万元"
+      },
+      {
+        "method_name": "dcf",
+        "display_name": "DCF 现金流折现法",
+        "valuation_low": 2085640,
+        "valuation_mid": 2607050,
+        "valuation_high": 3128460,
+        "params": {
+          "discount_rate": 0.01,
+          "growth_rate": 0.06,
+          "projection_years": 5,
+          "base_cashflow": 450000
+        },
+        "calculation_detail": "基于经营现金流450,000万元，5年预测期，折现率1%，永续增长率6%"
+      },
+      {
+        "method_name": "pb",
+        "display_name": "P/B 市净率法",
+        "valuation_low": 4785000,
+        "valuation_mid": 6225000,
+        "valuation_high": 11565000,
+        "params": {
+          "comparable_pb_median": 4.15,
+          "comparable_pb_range": [
+            3.19,
+            7.71
+          ]
+        },
+        "calculation_detail": "取可比公司PB中位数4.15，乘以目标公司净资产1,500,000万元，得估值6,225,000万元"
+      }
+    ],
+    "dcf_projection": {
+      "base_cashflow": 450000,
+      "discount_rate": 0.01,
+      "growth_rate": 0.06,
+      "projection_years": 5,
+      "yearly_cashflows": [
+        {
+          "year": "2026E",
+          "projected": 477000,
+          "discounted": 472277
+        },
+        {
+          "year": "2027E",
+          "projected": 505620,
+          "discounted": 495657
+        },
+        {
+          "year": "2028E",
+          "projected": 535957,
+          "discounted": 520195
+        },
+        {
+          "year": "2029E",
+          "projected": 568115,
+          "discounted": 545947
+        },
+        {
+          "year": "2030E",
+          "projected": 602202,
+          "discounted": 572974
+        }
+      ],
+      "terminal_value": 0,
+      "terminal_value_discounted": 0
+    },
+    "comparable_scatter": [
+      {
+        "name": "哔哩哔哩",
+        "pe": 61.42,
+        "pb": 4.71,
+        "revenue": 6500000
+      },
+      {
+        "name": "Meta Platforms",
+        "pe": 28.2,
+        "pb": 7.71,
+        "revenue": 134000000
+      },
+      {
+        "name": "腾讯控股",
+        "pe": 18.28,
+        "pb": 3.59,
+        "revenue": 55000000
+      },
+      {
+        "name": "网易",
+        "pe": 15.14,
+        "pb": 3.19,
+        "revenue": 10500000
+      }
+    ],
+    "dcf_params": {
+      "discount_rate": 0.01,
+      "growth_rate": 0.06,
+      "projection_years": 5
+    },
+    "ai_recommendation": {
+      "recommended_method": "PE可比法",
+      "reason": "目标公司处于成熟期互联网行业，盈利稳定，PE可比法最能反映市场对该行业的估值共识",
+      "summary": "综合三种估值方法，米哈游估值中枢约619亿。考虑到公司盈利能力稳定且可比公司样本充足，PE可比法最具参考价值。DCF法受折现率假设影响较大，P/B法因轻资产属性偏高，建议以PE法为锚。",
+      "confidence": 82,
+      "ai_enhanced": false
+    },
+    "sensitivity_analysis": {
+      "discount_rates": [
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14
+      ],
+      "scenarios": [
+        {
+          "growth_rate": 3,
+          "valuations": [
+            0.93,
+            0.77,
+            0.66,
+            0.58,
+            0.51,
+            0.46,
+            0.42
+          ]
+        },
+        {
+          "growth_rate": 5,
+          "valuations": [
+            1.57,
+            1.18,
+            0.94,
+            0.79,
+            0.68,
+            0.59,
+            0.52
+          ]
+        },
+        {
+          "growth_rate": 7,
+          "valuations": [
+            4.82,
+            2.41,
+            1.61,
+            1.2,
+            0.96,
+            0.8,
+            0.69
+          ]
+        }
+      ]
+    }
+  },
+  "comp_007": {
+    "company_name": "网易",
+    "last_valued_at": "2026-04-15 14:14:16",
+    "target_net_profit": 3364568,
+    "target_net_assets": 15992214,
+    "base_cashflow": 3700000,
+    "comparable_count": 3,
+    "methods": [
+      {
+        "method_name": "pe_comparable",
+        "display_name": "PE 可比法",
+        "valuation_low": 32468081,
+        "valuation_mid": 58846294,
+        "valuation_high": 61504303,
+        "params": {
+          "comparable_pe_median": 17.49,
+          "comparable_pe_range": [
+            9.65,
+            18.28
+          ],
+          "comparable_companies": [
+            "腾讯控股",
+            "快手科技",
+            "阿里巴巴"
+          ]
+        },
+        "calculation_detail": "取3家可比公司PE中位数17.49，乘以目标公司净利润3,364,568万元，得估值58,846,294万元"
+      },
+      {
+        "method_name": "dcf",
+        "display_name": "DCF 现金流折现法",
+        "valuation_low": 62160000,
+        "valuation_mid": 77700000,
+        "valuation_high": 93240000,
+        "params": {
+          "discount_rate": 0.1,
+          "growth_rate": 0.05,
+          "projection_years": 5,
+          "base_cashflow": 3700000
+        },
+        "calculation_detail": "基于经营现金流3,700,000万元，5年预测期，折现率10%，永续增长率5%"
+      },
+      {
+        "method_name": "pb",
+        "display_name": "P/B 市净率法",
+        "valuation_low": 34223338,
+        "valuation_mid": 36462248,
+        "valuation_high": 57412048,
+        "params": {
+          "comparable_pb_median": 2.28,
+          "comparable_pb_range": [
+            2.14,
+            3.59
+          ]
+        },
+        "calculation_detail": "取可比公司PB中位数2.28，乘以目标公司净资产15,992,214万元，得估值36,462,248万元"
+      }
+    ],
+    "dcf_projection": {
+      "base_cashflow": 3700000,
+      "discount_rate": 0.1,
+      "growth_rate": 0.05,
+      "projection_years": 5,
+      "yearly_cashflows": [
+        {
+          "year": "2026E",
+          "projected": 3885000,
+          "discounted": 3531818
+        },
+        {
+          "year": "2027E",
+          "projected": 4079250,
+          "discounted": 3371281
+        },
+        {
+          "year": "2028E",
+          "projected": 4283213,
+          "discounted": 3218041
+        },
+        {
+          "year": "2029E",
+          "projected": 4497373,
+          "discounted": 3071766
+        },
+        {
+          "year": "2030E",
+          "projected": 4722242,
+          "discounted": 2932141
+        }
+      ],
+      "terminal_value": 99167077,
+      "terminal_value_discounted": 61574953
+    },
+    "comparable_scatter": [
+      {
+        "name": "腾讯控股",
+        "pe": 18.28,
+        "pb": 3.59,
+        "revenue": 55000000
+      },
+      {
+        "name": "快手科技",
+        "pe": 9.65,
+        "pb": 2.28,
+        "revenue": 11000000
+      },
+      {
+        "name": "阿里巴巴",
+        "pe": 17.49,
+        "pb": 2.14,
+        "revenue": 86000000
+      }
+    ],
+    "dcf_params": {
+      "discount_rate": 0.1,
+      "growth_rate": 0.05,
+      "projection_years": 5
+    },
+    "ai_recommendation": {
+      "recommended_method": "PE可比法",
+      "reason": "目标公司处于成熟期互联网行业，盈利稳定，PE可比法最能反映市场对该行业的估值共识",
+      "summary": "综合三种估值方法，网易估值中枢约6.0万亿。考虑到公司盈利能力稳定且可比公司样本充足，PE可比法最具参考价值。DCF法受折现率假设影响较大，P/B法因轻资产属性偏高，建议以PE法为锚。",
+      "confidence": 82,
+      "ai_enhanced": false
+    },
+    "sensitivity_analysis": {
+      "discount_rates": [
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14
+      ],
+      "scenarios": [
+        {
+          "growth_rate": 3,
+          "valuations": [
+            7.62,
+            6.35,
+            5.44,
+            4.76,
+            4.23,
+            3.81,
+            3.46
+          ]
+        },
+        {
+          "growth_rate": 5,
+          "valuations": [
+            12.95,
+            9.71,
+            7.77,
+            6.47,
+            5.55,
+            4.86,
+            4.32
+          ]
+        },
+        {
+          "growth_rate": 7,
+          "valuations": [
+            39.59,
+            19.8,
+            13.2,
+            9.9,
+            7.92,
+            6.6,
+            5.66
+          ]
+        }
+      ]
+    }
+  },
+  "comp_003": {
+    "company_name": "蚂蚁集团",
+    "last_valued_at": "2026-04-15 13:58:49",
+    "target_net_profit": 550000,
+    "target_net_assets": 4200000,
+    "base_cashflow": 680000,
+    "comparable_count": 3,
+    "methods": [
+      {
+        "method_name": "pe_comparable",
+        "display_name": "PE 可比法",
+        "valuation_low": 3674000,
+        "valuation_mid": 4334000,
+        "valuation_high": 10054000,
+        "params": {
+          "comparable_pe_median": 7.88,
+          "comparable_pe_range": [
+            6.68,
+            18.28
+          ],
+          "comparable_companies": [
+            "中国平安",
+            "招商银行",
+            "腾讯控股"
+          ]
+        },
+        "calculation_detail": "取3家可比公司PE中位数7.88，乘以目标公司净利润550,000万元，得估值4,334,000万元"
+      },
+      {
+        "method_name": "dcf",
+        "display_name": "DCF 现金流折现法",
+        "valuation_low": 11424000,
+        "valuation_mid": 14280000,
+        "valuation_high": 17136000,
+        "params": {
+          "discount_rate": 0.1,
+          "growth_rate": 0.05,
+          "projection_years": 5,
+          "base_cashflow": 680000
+        },
+        "calculation_detail": "基于经营现金流680,000万元，5年预测期，折现率10%，永续增长率5%"
+      },
+      {
+        "method_name": "pb",
+        "display_name": "P/B 市净率法",
+        "valuation_low": 3864000,
+        "valuation_mid": 4452000,
+        "valuation_high": 15078000,
+        "params": {
+          "comparable_pb_median": 1.06,
+          "comparable_pb_range": [
+            0.92,
+            3.59
+          ]
+        },
+        "calculation_detail": "取可比公司PB中位数1.06，乘以目标公司净资产4,200,000万元，得估值4,452,000万元"
+      }
+    ],
+    "dcf_projection": {
+      "base_cashflow": 680000,
+      "discount_rate": 0.1,
+      "growth_rate": 0.05,
+      "projection_years": 5,
+      "yearly_cashflows": [
+        {
+          "year": "2026E",
+          "projected": 714000,
+          "discounted": 649091
+        },
+        {
+          "year": "2027E",
+          "projected": 749700,
+          "discounted": 619587
+        },
+        {
+          "year": "2028E",
+          "projected": 787185,
+          "discounted": 591424
+        },
+        {
+          "year": "2029E",
+          "projected": 826544,
+          "discounted": 564541
+        },
+        {
+          "year": "2030E",
+          "projected": 867871,
+          "discounted": 538880
+        }
+      ],
+      "terminal_value": 18225301,
+      "terminal_value_discounted": 11316478
+    },
+    "comparable_scatter": [
+      {
+        "name": "中国平安",
+        "pe": 7.88,
+        "pb": 1.06,
+        "revenue": 92000000
+      },
+      {
+        "name": "招商银行",
+        "pe": 6.68,
+        "pb": 0.92,
+        "revenue": 34000000
+      },
+      {
+        "name": "腾讯控股",
+        "pe": 18.28,
+        "pb": 3.59,
+        "revenue": 55000000
+      }
+    ],
+    "dcf_params": {
+      "discount_rate": 0.1,
+      "growth_rate": 0.05,
+      "projection_years": 5
+    },
+    "ai_recommendation": {
+      "recommended_method": "PE可比法",
+      "reason": "目标公司处于成熟期互联网行业，盈利稳定，PE可比法最能反映市场对该行业的估值共识",
+      "summary": "综合三种估值方法，蚂蚁集团估值中枢约784亿。考虑到公司盈利能力稳定且可比公司样本充足，PE可比法最具参考价值。DCF法受折现率假设影响较大，P/B法因轻资产属性偏高，建议以PE法为锚。",
+      "confidence": 82,
+      "ai_enhanced": false
+    },
+    "sensitivity_analysis": {
+      "discount_rates": [
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14
+      ],
+      "scenarios": [
+        {
+          "growth_rate": 3,
+          "valuations": [
+            1.4,
+            1.17,
+            1.0,
+            0.88,
+            0.78,
+            0.7,
+            0.64
+          ]
+        },
+        {
+          "growth_rate": 5,
+          "valuations": [
+            2.38,
+            1.79,
+            1.43,
+            1.19,
+            1.02,
+            0.89,
+            0.79
+          ]
+        },
+        {
+          "growth_rate": 7,
+          "valuations": [
+            7.28,
+            3.64,
+            2.43,
+            1.82,
+            1.46,
+            1.21,
+            1.04
+          ]
+        }
+      ]
+    }
+  },
+  "comp_008": {
+    "company_name": "京东",
+    "last_valued_at": "2026-04-15 14:02:06",
+    "target_net_profit": 1734282,
+    "target_net_assets": 19838194,
+    "base_cashflow": 2081000,
+    "comparable_count": 3,
+    "methods": [
+      {
+        "method_name": "pe_comparable",
+        "display_name": "PE 可比法",
+        "valuation_low": 16735821,
+        "valuation_mid": 18487446,
+        "valuation_high": 31702675,
+        "params": {
+          "comparable_pe_median": 10.66,
+          "comparable_pe_range": [
+            9.65,
+            18.28
+          ],
+          "comparable_companies": [
+            "拼多多",
+            "腾讯控股",
+            "快手科技"
+          ]
+        },
+        "calculation_detail": "取3家可比公司PE中位数10.66，乘以目标公司净利润1,734,282万元，得估值18,487,446万元"
+      },
+      {
+        "method_name": "dcf",
+        "display_name": "DCF 现金流折现法",
+        "valuation_low": 34960800,
+        "valuation_mid": 43701000,
+        "valuation_high": 52441200,
+        "params": {
+          "discount_rate": 0.1,
+          "growth_rate": 0.05,
+          "projection_years": 5,
+          "base_cashflow": 2081000
+        },
+        "calculation_detail": "基于经营现金流2,081,000万元，5年预测期，折现率10%，永续增长率5%"
+      },
+      {
+        "method_name": "pb",
+        "display_name": "P/B 市净率法",
+        "valuation_low": 45231082,
+        "valuation_mid": 47413284,
+        "valuation_high": 71219116,
+        "params": {
+          "comparable_pb_median": 2.39,
+          "comparable_pb_range": [
+            2.28,
+            3.59
+          ]
+        },
+        "calculation_detail": "取可比公司PB中位数2.39，乘以目标公司净资产19,838,194万元，得估值47,413,284万元"
+      }
+    ],
+    "dcf_projection": {
+      "base_cashflow": 2081000,
+      "discount_rate": 0.1,
+      "growth_rate": 0.05,
+      "projection_years": 5,
+      "yearly_cashflows": [
+        {
+          "year": "2026E",
+          "projected": 2185050,
+          "discounted": 1986409
+        },
+        {
+          "year": "2027E",
+          "projected": 2294302,
+          "discounted": 1896118
+        },
+        {
+          "year": "2028E",
+          "projected": 2409018,
+          "discounted": 1809931
+        },
+        {
+          "year": "2029E",
+          "projected": 2529469,
+          "discounted": 1727661
+        },
+        {
+          "year": "2030E",
+          "projected": 2655942,
+          "discounted": 1649131
+        }
+      ],
+      "terminal_value": 55774781,
+      "terminal_value_discounted": 34631751
+    },
+    "comparable_scatter": [
+      {
+        "name": "拼多多",
+        "pe": 10.66,
+        "pb": 2.39,
+        "revenue": 39000000
+      },
+      {
+        "name": "腾讯控股",
+        "pe": 18.28,
+        "pb": 3.59,
+        "revenue": 55000000
+      },
+      {
+        "name": "快手科技",
+        "pe": 9.65,
+        "pb": 2.28,
+        "revenue": 11000000
+      }
+    ],
+    "dcf_params": {
+      "discount_rate": 0.1,
+      "growth_rate": 0.05,
+      "projection_years": 5
+    },
+    "ai_recommendation": {
+      "recommended_method": "PE可比法",
+      "reason": "目标公司处于成熟期互联网行业，盈利稳定，PE可比法最能反映市场对该行业的估值共识",
+      "summary": "综合三种估值方法，京东估值中枢约3.5万亿。考虑到公司盈利能力稳定且可比公司样本充足，PE可比法最具参考价值。DCF法受折现率假设影响较大，P/B法因轻资产属性偏高，建议以PE法为锚。",
+      "confidence": 82,
+      "ai_enhanced": false
+    },
+    "sensitivity_analysis": {
+      "discount_rates": [
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14
+      ],
+      "scenarios": [
+        {
+          "growth_rate": 3,
+          "valuations": [
+            4.29,
+            3.57,
+            3.06,
+            2.68,
+            2.38,
+            2.14,
+            1.95
+          ]
+        },
+        {
+          "growth_rate": 5,
+          "valuations": [
+            7.28,
+            5.46,
+            4.37,
+            3.64,
+            3.12,
+            2.73,
+            2.43
+          ]
+        },
+        {
+          "growth_rate": 7,
+          "valuations": [
+            22.27,
+            11.13,
+            7.42,
+            5.57,
+            4.45,
+            3.71,
+            3.18
+          ]
+        }
+      ]
+    }
+  }
+}

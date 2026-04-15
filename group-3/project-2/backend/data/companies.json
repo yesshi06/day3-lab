@@ -1,0 +1,10 @@
+[
+  {"company_id": "comp_001", "name": "字节跳动", "industry": "互联网", "founded_year": 2012, "description": "全球领先的内容平台公司，旗下拥有抖音、TikTok、今日头条等产品"},
+  {"company_id": "comp_002", "name": "米哈游", "industry": "游戏", "founded_year": 2012, "description": "知名游戏研发公司，代表作《原神》《崩坏》系列"},
+  {"company_id": "comp_003", "name": "蚂蚁集团", "industry": "金融科技", "founded_year": 2014, "description": "全球领先的金融科技开放平台，旗下拥有支付宝"},
+  {"company_id": "comp_004", "name": "大疆创新", "industry": "智能硬件", "founded_year": 2006, "description": "全球领先的无人机及影像技术公司"},
+  {"company_id": "comp_005", "name": "SpaceX", "industry": "航天", "founded_year": 2002, "description": "美国太空探索技术公司，致力于降低太空运输成本"},
+  {"company_id": "comp_006", "name": "Shein", "industry": "电商", "founded_year": 2008, "description": "全球快时尚跨境电商平台"},
+  {"company_id": "comp_007", "name": "网易", "industry": "游戏", "founded_year": 1997, "description": "中国领先的互联网技术公司，旗下拥有网易云音乐、网易游戏等业务"},
+  {"company_id": "comp_008", "name": "京东", "industry": "电商", "founded_year": 1998, "description": "中国领先的自营式电商平台，以正品行货和自建物流著称"}
+]

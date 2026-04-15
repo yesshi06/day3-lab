@@ -1,0 +1,173 @@
+[
+  {
+    "company_id": "comp_001",
+    "period": "2025-FY",
+    "revenue": 6000000,
+    "net_profit": 1200000,
+    "total_assets": 15000000,
+    "net_assets": 8000000,
+    "operating_cashflow": 1500000,
+    "eps": null,
+    "stock_price": null
+  },
+  {
+    "company_id": "comp_001",
+    "period": "2024-FY",
+    "revenue": 5100000,
+    "net_profit": 980000,
+    "total_assets": 12800000,
+    "net_assets": 6950000,
+    "operating_cashflow": 1250000,
+    "eps": null,
+    "stock_price": null
+  },
+  {
+    "company_id": "comp_001",
+    "period": "2023-FY",
+    "revenue": 4200000,
+    "net_profit": 750000,
+    "total_assets": 10500000,
+    "net_assets": 5800000,
+    "operating_cashflow": 980000,
+    "eps": null,
+    "stock_price": null
+  },
+  {
+    "company_id": "comp_001",
+    "period": "2022-FY",
+    "revenue": 3500000,
+    "net_profit": 520000,
+    "total_assets": 8900000,
+    "net_assets": 4700000,
+    "operating_cashflow": 720000,
+    "eps": null,
+    "stock_price": null
+  },
+  {
+    "company_id": "comp_001",
+    "period": "2021-FY",
+    "revenue": 2800000,
+    "net_profit": 350000,
+    "total_assets": 7200000,
+    "net_assets": 3600000,
+    "operating_cashflow": 550000,
+    "eps": null,
+    "stock_price": null
+  },
+  {
+    "company_id": "comp_002",
+    "period": "2025-FY",
+    "revenue": 800000,
+    "net_profit": 400000,
+    "total_assets": 2000000,
+    "net_assets": 1500000,
+    "operating_cashflow": 450000,
+    "eps": null,
+    "stock_price": null
+  },
+  {
+    "company_id": "comp_002",
+    "period": "2024-FY",
+    "revenue": 680000,
+    "net_profit": 320000,
+    "total_assets": 1700000,
+    "net_assets": 1250000,
+    "operating_cashflow": 380000,
+    "eps": null,
+    "stock_price": null
+  },
+  {
+    "company_id": "comp_002",
+    "period": "2023-FY",
+    "revenue": 550000,
+    "net_profit": 250000,
+    "total_assets": 1400000,
+    "net_assets": 1020000,
+    "operating_cashflow": 300000,
+    "eps": null,
+    "stock_price": null
+  },
+  {
+    "company_id": "comp_002",
+    "period": "2022-FY",
+    "revenue": 420000,
+    "net_profit": 180000,
+    "total_assets": 1100000,
+    "net_assets": 800000,
+    "operating_cashflow": 220000,
+    "eps": null,
+    "stock_price": null
+  },
+  {
+    "company_id": "comp_002",
+    "period": "2021-FY",
+    "revenue": 300000,
+    "net_profit": 120000,
+    "total_assets": 850000,
+    "net_assets": 600000,
+    "operating_cashflow": 150000,
+    "eps": null,
+    "stock_price": null
+  },
+  {
+    "company_id": "comp_003",
+    "period": "2025-FY",
+    "revenue": 2200000,
+    "net_profit": 550000,
+    "total_assets": 8500000,
+    "net_assets": 4200000,
+    "operating_cashflow": 680000,
+    "eps": null,
+    "stock_price": null
+  },
+  {
+    "company_id": "comp_003",
+    "period": "2024-FY",
+    "revenue": 1950000,
+    "net_profit": 480000,
+    "total_assets": 7800000,
+    "net_assets": 3800000,
+    "operating_cashflow": 600000,
+    "eps": null,
+    "stock_price": null
+  },
+  {
+    "company_id": "comp_003",
+    "period": "2023-FY",
+    "revenue": 1700000,
+    "net_profit": 400000,
+    "total_assets": 7000000,
+    "net_assets": 3400000,
+    "operating_cashflow": 510000,
+    "eps": null,
+    "stock_price": null
+  },
+  {
+    "company_id": "comp_003",
+    "period": "2022-FY",
+    "revenue": 1450000,
+    "net_profit": 320000,
+    "total_assets": 6200000,
+    "net_assets": 3000000,
+    "operating_cashflow": 420000,
+    "eps": null,
+    "stock_price": null
+  },
+  {
+    "company_id": "comp_003",
+    "period": "2021-FY",
+    "revenue": 1200000,
+    "net_profit": 250000,
+    "total_assets": 5500000,
+    "net_assets": 2600000,
+    "operating_cashflow": 340000,
+    "eps": null,
+    "stock_price": null
+  },
+  {"company_id": "comp_007", "period": "2025-FY", "revenue": 10500000, "net_profit": 3364568, "total_assets": 24603000, "net_assets": 15992214, "operating_cashflow": 3700000, "eps": null, "stock_price": 179.6},
+  {"company_id": "comp_007", "period": "2024-FY", "revenue": 9500000, "net_profit": 2900000, "total_assets": 22000000, "net_assets": 14200000, "operating_cashflow": 3200000, "eps": null, "stock_price": null},
+  {"company_id": "comp_007", "period": "2023-FY", "revenue": 8500000, "net_profit": 2500000, "total_assets": 19800000, "net_assets": 12600000, "operating_cashflow": 2750000, "eps": null, "stock_price": null},
+  {"company_id": "comp_008", "period": "2025-FY", "revenue": 108000000, "net_profit": 1734282, "total_assets": 56680000, "net_assets": 19838194, "operating_cashflow": 2081000, "eps": null, "stock_price": 121.8},
+  {"company_id": "comp_008", "period": "2024-FY", "revenue": 100000000, "net_profit": 1500000, "total_assets": 52000000, "net_assets": 18200000, "operating_cashflow": 1800000, "eps": null, "stock_price": null},
+  {"company_id": "comp_008", "period": "2023-FY", "revenue": 92600000, "net_profit": 1200000, "total_assets": 48000000, "net_assets": 16800000, "operating_cashflow": 1440000, "eps": null, "stock_price": null}
+]
