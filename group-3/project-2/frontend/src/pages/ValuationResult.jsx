@@ -18,8 +18,7 @@ const fmtWanyi = v => {
 
 const METHOD_COLORS = { pe_comparable:'#4F6BF6', dcf:'#22C55E', pb:'#F59E0B' }
 
-const MOCK = {
-  company_id:'comp_001', company_name:'字节跳动',
+const MOCK_TEMPLATE = {
   valuation_center:28000000, valuation_range_low:20000000, valuation_range_high:38400000,
   methods_summary:[
     { method_name:'pe_comparable', display_name:'PE 可比法', valuation_low:24000000, valuation_mid:27000000, valuation_high:34000000, valuation_range:'2.4万亿 ~ 3.4万亿', weight:40 },
@@ -28,8 +27,8 @@ const MOCK = {
   ],
   ai_recommendation:{
     recommended_method:'PE可比法',
-    reason:'目标公司处于成熟期互联网行业，盈利稳定，PE可比法最能反映市场对该行业的估值共识',
-    summary:'综合三种估值方法，字节跳动估值中枢约2.8万亿元。考虑到公司盈利能力稳定且可比公司样本充足，PE可比法最具参考价值。DCF法受折现率假设影响较大，P/B法因轻资产属性偏高，建议以PE法为锚。',
+    reason: '目标公司处于成熟期，盈利稳定，PE可比法最能反映市场对该行业的估值共识',
+    summary: '综合三种估值方法，目标公司估值中枢约2.8万亿元。考虑到公司盈利能力稳定且可比公司样本充足，PE可比法最具参考价值。DCF法受折现率假设影响较大，P/B法因轻资产属性偏高，建议以PE法为锚。',
     confidence:82,
   },
   sensitivity_analysis:{
@@ -47,21 +46,45 @@ const MOCK = {
   ],
 }
 
+function buildMockSummary(companyId, companyName) {
+  return {
+    ...MOCK_TEMPLATE,
+    company_id: companyId,
+    company_name: companyName || `公司 ${companyId}`,
+  }
+}
+
 export default function ValuationResult() {
   const { id } = useParams()
   const navigate = useNavigate()
   const [data, setData] = useState(null)
+  const [company, setCompany] = useState(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => { loadData() }, [id])
 
   async function loadData() {
     setLoading(true)
+    // 先获取公司基本信息，确保能展示正确的公司名称
+    let companyInfo = null
+    try {
+      companyInfo = await api.getCompany(id)
+      setCompany(companyInfo)
+    } catch {
+      // 公司信息获取失败时使用 ID 作为标识
+      companyInfo = { company_id: id, name: `公司 ${id}`, industry: '-' }
+      setCompany(companyInfo)
+    }
     try {
       const d = await api.getValuationSummary(id)
-      setData(d)
+      // 确保返回数据中的公司信息与当前路由 ID 一致
+      setData({
+        ...d,
+        company_id: id,
+        company_name: d.company_name || companyInfo?.name || `公司 ${id}`,
+      })
     } catch {
-      setData(MOCK)
+      setData(buildMockSummary(id, companyInfo?.name))
     } finally {
       setLoading(false)
     }
@@ -106,7 +129,11 @@ export default function ValuationResult() {
   return (
     <>
       <h1 className="page-title">估值结果综合展示</h1>
-      <p className="page-desc">{data.company_name} — 多方法估值汇总、估值中枢与 AI 推荐</p>
+      <p className="page-desc">
+        <strong>{data.company_name}</strong>
+        {company?.industry && <span className="badge badge-blue" style={{ marginLeft: 8, fontSize: 11 }}>{company.industry}</span>}
+        {' '} — 多方法估值汇总、估值中枢与 AI 推荐
+      </p>
       <Stepper />
 
       {/* Big Center Value */}

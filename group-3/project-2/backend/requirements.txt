@@ -2,3 +2,5 @@ flask==3.1.1
 flask-cors==5.0.1
 dashscope==1.22.1
 akshare>=1.18
+pytest>=8.0
+pytest-cov>=5.0

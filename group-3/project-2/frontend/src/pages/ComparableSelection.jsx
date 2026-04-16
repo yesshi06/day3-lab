@@ -11,7 +11,7 @@ import Stepper from '../components/Stepper'
 import '../components/components.css'
 
 const MOCK_RECS = {
-  prompt_summary: '基于字节跳动的行业属性（互联网）、营收规模和业务模式，推荐以下 4 家可比上市公司。',
+  prompt_summary: '基于目标公司的行业属性、营收规模和业务模式，推荐以下可比上市公司。',
   recommendations: [
     { comparable_id:'listed_001', name:'腾讯控股', industry:'互联网', reason:'同为互联网平台型公司，营收规模相近', similarity_score:0.92,
       similarity_dimensions:{ industry:95, scale:85, business_model:80, profitability:90, growth:75 }},

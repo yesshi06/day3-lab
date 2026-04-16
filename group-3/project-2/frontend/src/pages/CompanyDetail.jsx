@@ -82,8 +82,8 @@ export default function CompanyDetail() {
     } catch {
       // Fallback mock
       setCompany(normalizeCompany({
-        company_id:id, name:'字节跳动', industry:'互联网', founded_year:2012,
-        description:'全球领先的内容平台公司', has_financials:true,
+        company_id: id, name: `公司 ${id}`, industry: '未知行业', founded_year: '-',
+        description: '暂无公司简介（后端服务不可用，当前为演示数据）', has_financials: true,
         industry_info:{
           avg_pe:25.3, growth_rate:12.5, company_count:34,
           pe_distribution:[

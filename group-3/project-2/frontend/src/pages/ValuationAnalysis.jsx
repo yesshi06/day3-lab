@@ -26,8 +26,8 @@ const fmtWanyi = v => {
 const METHOD_COLORS = { pe_comparable: '#4F6BF6', dcf: '#22C55E', pb: '#F59E0B' }
 const METHOD_CLASS = { pe_comparable: '', dcf: ' dcf', pb: ' pb' }
 
-const MOCK_METHODS = {
-  company_id:'comp_001', company_name:'字节跳动', target_net_profit:1200000, target_net_assets:8000000, comparable_count:4,
+const MOCK_METHODS_TEMPLATE = {
+  target_net_profit: 1200000, target_net_assets: 8000000, comparable_count: 4,
   methods: [
     { method_name:'pe_comparable', display_name:'PE 可比法', valuation_low:24000000, valuation_mid:27000000, valuation_high:34000000,
       params:{ comparable_pe_median:22.5, comparable_pe_range:[18.0,28.3], comparable_companies:['腾讯控股','快手科技','哔哩哔哩','Meta Platforms'] },
@@ -58,12 +58,12 @@ const MOCK_METHODS = {
   ],
 }
 
-function buildMockMethods(companyId, previousData) {
+function buildMockMethods(companyId, companyName, previousData) {
   return {
-    ...MOCK_METHODS,
+    ...MOCK_METHODS_TEMPLATE,
     ...previousData,
     company_id: companyId,
-    company_name: previousData?.company_name ?? '当前公司',
+    company_name: companyName || previousData?.company_name || `公司 ${companyId}`,
   }
 }
 
@@ -71,17 +71,38 @@ export default function ValuationAnalysis() {
   const { id } = useParams()
   const navigate = useNavigate()
   const [data, setData] = useState(null)
+  const [company, setCompany] = useState(null)
   const [loading, setLoading] = useState(true)
   const [dcfParams, setDcfParams] = useState({ discount_rate:10, growth_rate:5, projection_years:5 })
 
-  useEffect(() => { runAndLoad() }, [id])
+  useEffect(() => { loadCompanyAndRun() }, [id])
 
-  async function runAndLoad(params) {
+  async function loadCompanyAndRun() {
     setLoading(true)
+    // 先获取公司基本信息
+    let companyInfo = null
+    try {
+      companyInfo = await api.getCompany(id)
+      setCompany(companyInfo)
+    } catch {
+      companyInfo = { company_id: id, name: `公司 ${id}`, industry: '-' }
+      setCompany(companyInfo)
+    }
+    await runAndLoad(null, companyInfo)
+  }
+
+  async function runAndLoad(params, companyInfo) {
+    setLoading(true)
+    const cInfo = companyInfo || company
     try {
       await api.runValuation(id, params || {})
       const m = await api.getValuationMethods(id)
-      setData(m)
+      // 确保返回数据中的公司信息与当前路由 ID 一致
+      setData({
+        ...m,
+        company_id: id,
+        company_name: m.company_name || cInfo?.name || `公司 ${id}`,
+      })
       if (m.methods) {
         const dcf = m.methods.find(m => m.method_name === 'dcf')
         if (dcf?.params) {
@@ -93,7 +114,7 @@ export default function ValuationAnalysis() {
         }
       }
     } catch {
-      setData(prev => buildMockMethods(id, prev))
+      setData(prev => buildMockMethods(id, cInfo?.name, prev))
     } finally {
       setLoading(false)
     }
@@ -134,12 +155,17 @@ export default function ValuationAnalysis() {
   return (
     <>
       <h1 className="page-title">多方法估值分析</h1>
-      <p className="page-desc">基于 {data.comparable_count} 家已确认可比公司，并行运行 PE 可比法、DCF 法、P/B 法</p>
+      <p className="page-desc">
+        <strong>{data.company_name}</strong>
+        {company?.industry && <span className="badge badge-blue" style={{ marginLeft: 8, fontSize: 11 }}>{company.industry}</span>}
+        {company?.founded_year && <span style={{ marginLeft: 8, fontSize: 12, color: 'var(--text2)' }}>成立于 {company.founded_year}</span>}
+        {' '} — 基于 {data.comparable_count} 家已确认可比公司，并行运行 PE 可比法、DCF 法、P/B 法
+      </p>
       <Stepper />
 
       {/* Target Info */}
       <div className="grid-4" style={{ marginBottom:20 }}>
-        <StatCard label="目标公司" value={data.company_name} delay={0} />
+        <StatCard label="目标公司" value={data.company_name} sub={company?.industry || ''} delay={0} />
         <StatCard label="目标净利润" value={fmtWanyi(data.target_net_profit)} delay={0.05} />
         <StatCard label="目标净资产" value={fmtWanyi(data.target_net_assets)} delay={0.1} />
         <StatCard label="可比公司" value={`${data.comparable_count} 家`} delay={0.15} />
